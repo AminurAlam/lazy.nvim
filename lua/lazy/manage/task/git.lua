@@ -22,7 +22,7 @@ M.log = {
   run = function(self, opts)
     local args = {
       "log",
-      "--pretty=format:%h %s (%cr)",
+      "--pretty=format:%h %<(50,trunc)%-s (%cr)",
       "--abbrev-commit",
       "--decorate",
       "--date=short",
@@ -71,6 +71,7 @@ M.clone = {
   run = function(self)
     local args = {
       "clone",
+      "--depth=1",
       self.plugin.url,
     }
 
@@ -212,6 +213,7 @@ M.fetch = {
   run = function(self)
     local args = {
       "fetch",
+      "--deepen=0",
       "--recurse-submodules",
       "--tags", -- also fetch remote tags
       "--force", -- overwrite existing tags if needed
