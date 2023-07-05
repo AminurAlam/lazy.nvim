@@ -402,11 +402,11 @@ end
 function M:plugin(plugin)
   local hl = plugin._.is_local and "LazyLocal" or "LazySpecial"
   if plugin._.loaded then
-    self:append("  " .. Config.options.ui.icons.loaded .. " ", hl):append(plugin.name)
+    self:append(Config.options.ui.icons.loaded .. " ", hl):append(plugin.name)
   elseif plugin._.cond == false then
-    self:append("  " .. Config.options.ui.icons.not_loaded .. " ", "LazyNoCond"):append(plugin.name)
+    self:append(Config.options.ui.icons.not_loaded .. " ", "LazyNoCond"):append(plugin.name)
   else
-    self:append("  " .. Config.options.ui.icons.not_loaded .. " ", hl):append(plugin.name)
+    self:append(Config.options.ui.icons.not_loaded .. " ", hl):append(plugin.name)
   end
   local plugin_start = self:row()
   if plugin._.loaded then
@@ -460,11 +460,11 @@ function M:log(task)
   if log ~= "" then
     local lines = vim.split(log, "\n")
     for _, line in ipairs(lines) do
-      local ref, msg, time = line:match("^(%w+) (.*) (%(.*%))$")
+      local msg, time = line:match("^(.*) (%(.*%))$")
       if msg:find("^%S+!:") then
         self:diagnostic({ message = "Breaking Changes", severity = vim.diagnostic.severity.WARN })
       end
-      self:append(ref:sub(1, 7) .. " ", "LazyCommit", { indent = 6 })
+      self:append("  ", "Normal")
 
       local dimmed = false
       for _, dim in ipairs(ViewConfig.dimmed_commits) do

@@ -22,7 +22,7 @@ M.log = {
   run = function(self, opts)
     local args = {
       "log",
-      "--pretty=format:%h %<(50,trunc)%-s (%cr)",
+      "--pretty=format:%s (%cr)",
       "--abbrev-commit",
       "--decorate",
       "--date=short",

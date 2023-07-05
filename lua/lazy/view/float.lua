@@ -183,6 +183,7 @@ function M:mount()
     Util.wo(self.win, "spell", false)
     Util.wo(self.win, "winhighlight", "Normal:LazyNormal")
     Util.wo(self.win, "colorcolumn", "")
+    Util.wo(self.win, "statuscolumn", " ")
   end
   opts()
 
