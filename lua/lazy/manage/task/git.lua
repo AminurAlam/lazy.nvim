@@ -24,7 +24,7 @@ M.log = {
     -- self:spawn({ "sleep", "5" })
     local args = {
       "log",
-      "--pretty=format:%h %<(50,trunc)%-s (%cr)",
+      "--pretty=format:%s (%cr)",
       "--abbrev-commit",
       "--decorate",
       "--date=short",
