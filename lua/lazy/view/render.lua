@@ -355,11 +355,7 @@ end
 ---@param plugin LazyPlugin
 function M:diagnostics(plugin)
   if plugin._.updated then
-    if plugin._.updated.from == plugin._.updated.to then
-      self:diagnostic({
-        message = "already up to date",
-      })
-    else
+    if not plugin._.updated.from == plugin._.updated.to then
       local version = Git.info(plugin.dir, true).version
       if version then
         self:diagnostic({
@@ -367,7 +363,7 @@ function M:diagnostics(plugin)
         })
       else
         self:diagnostic({
-          message = "updated from " .. plugin._.updated.from:sub(1, 7) .. " to " .. plugin._.updated.to:sub(1, 7),
+          message = plugin._.updated.from:sub(1, 7) .. " -> " .. plugin._.updated.to:sub(1, 7),
         })
       end
     end
