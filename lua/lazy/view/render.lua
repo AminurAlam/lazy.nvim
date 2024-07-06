@@ -412,11 +412,7 @@ function M:diagnostics(plugin)
       severity = vim.diagnostic.severity.WARN,
     })
   elseif plugin._.updated then
-    if plugin._.updated.from == plugin._.updated.to then
-      self:diagnostic({
-        message = "already up to date",
-      })
-    else
+    if not plugin._.updated.from == plugin._.updated.to then
       local version = Git.info(plugin.dir, true).version
       if version then
         self:diagnostic({
@@ -424,7 +420,7 @@ function M:diagnostics(plugin)
         })
       else
         self:diagnostic({
-          message = "updated from " .. plugin._.updated.from:sub(1, 7) .. " to " .. plugin._.updated.to:sub(1, 7),
+          message = plugin._.updated.from:sub(1, 7) .. " -> " .. plugin._.updated.to:sub(1, 7),
         })
       end
     end
@@ -446,11 +442,11 @@ end
 function M:plugin(plugin)
   local hl = plugin._.is_local and "LazyLocal" or "LazySpecial"
   if plugin._.loaded then
-    self:append("  " .. Config.options.ui.icons.loaded .. " ", hl):append(plugin.name)
+    self:append(Config.options.ui.icons.loaded .. " ", hl):append(plugin.name)
   elseif plugin._.cond == false then
-    self:append("  " .. Config.options.ui.icons.not_loaded .. " ", "LazyNoCond"):append(plugin.name)
+    self:append(Config.options.ui.icons.not_loaded .. " ", "LazyNoCond"):append(plugin.name)
   else
-    self:append("  " .. Config.options.ui.icons.not_loaded .. " ", hl):append(plugin.name)
+    self:append(Config.options.ui.icons.not_loaded .. " ", hl):append(plugin.name)
   end
   local plugin_start = self:row()
   if plugin._.loaded then
