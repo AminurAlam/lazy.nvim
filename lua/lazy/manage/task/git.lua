@@ -70,7 +70,7 @@ M.log = {
     -- self:spawn({ "sleep", "5" })
     local args = {
       "log",
-      "--pretty=format:%h %s (%cr)",
+      "--pretty=format:%s (%cr)",
       "--abbrev-commit",
       "--decorate",
       "--date=short",
@@ -133,6 +133,7 @@ M.clone = {
     throttle.wait()
     local args = {
       "clone",
+      "--depth=1",
       self.plugin.url,
     }
 
@@ -283,6 +284,7 @@ M.fetch = {
     throttle.wait()
     local args = {
       "fetch",
+      "--deepen=0",
       "--recurse-submodules",
       "--tags", -- also fetch remote tags
       "--force", -- overwrite existing tags if needed
