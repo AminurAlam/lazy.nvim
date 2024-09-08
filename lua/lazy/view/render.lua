@@ -410,11 +410,7 @@ function M:diagnostics(plugin)
       severity = vim.diagnostic.severity.WARN,
     })
   elseif plugin._.updated then
-    if plugin._.updated.from == plugin._.updated.to then
-      self:diagnostic({
-        message = "already up to date",
-      })
-    else
+    if not plugin._.updated.from == plugin._.updated.to then
       local version = Git.info(plugin.dir, true).version
       if version then
         self:diagnostic({
@@ -422,7 +418,7 @@ function M:diagnostics(plugin)
         })
       else
         self:diagnostic({
-          message = "updated from " .. plugin._.updated.from:sub(1, 7) .. " to " .. plugin._.updated.to:sub(1, 7),
+          message = plugin._.updated.from:sub(1, 7) .. " -> " .. plugin._.updated.to:sub(1, 7),
         })
       end
     end
@@ -444,11 +440,11 @@ end
 function M:plugin(plugin)
   local hl = plugin._.is_local and "LazyLocal" or "LazySpecial"
   if plugin._.loaded then
-    self:append("  " .. Config.options.ui.icons.loaded .. " ", hl):append(plugin.name)
+    self:append(Config.options.ui.icons.loaded .. " ", hl):append(plugin.name)
   elseif plugin._.cond == false then
-    self:append("  " .. Config.options.ui.icons.not_loaded .. " ", "LazyNoCond"):append(plugin.name)
+    self:append(Config.options.ui.icons.not_loaded .. " ", "LazyNoCond"):append(plugin.name)
   else
-    self:append("  " .. Config.options.ui.icons.not_loaded .. " ", hl):append(plugin.name)
+    self:append(Config.options.ui.icons.not_loaded .. " ", hl):append(plugin.name)
   end
   local plugin_start = self:row()
   if plugin._.loaded then
@@ -524,29 +520,31 @@ function M:log(task)
   if log ~= "" then
     local lines = vim.split(log, "\n")
     for _, line in ipairs(lines) do
-      local ref, msg, time = line:match("^(%w+) (.*) (%(.*%))$")
+      local msg, time = line:match("^(.*) (%(.*%))$")
       if msg then
-        if msg:find("^%S+!:") then
-          self:diagnostic({ message = "Breaking Changes", severity = vim.diagnostic.severity.WARN })
-        end
-        self:append(ref:sub(1, 7) .. " ", "LazyCommit", { indent = 6 })
-
         local dimmed = false
         for _, dim in ipairs(ViewConfig.dimmed_commits) do
           if msg:find("^" .. dim) then
             dimmed = true
           end
         end
-        self:append(vim.trim(msg), dimmed and "LazyDimmed" or nil):highlight({
-          ["#%d+"] = "LazyCommitIssue",
-          ["^%S+:"] = dimmed and "Bold" or "LazyCommitType",
-          ["^%S+(%(.*%))!?:"] = "LazyCommitScope",
-          ["`.-`"] = "@markup.raw.markdown_inline",
-          ["%*.-%*"] = "Italic",
-          ["%*%*.-%*%*"] = "Bold",
-        })
-        self:append(" " .. time, "LazyComment")
-        self:nl()
+        if not dimmed then
+          if msg:find("^%S+!:") then
+            self:diagnostic({ message = "Breaking Changes", severity = vim.diagnostic.severity.WARN })
+          end
+          self:append("", "Normal", { indent = 2 })
+
+          self:append(vim.trim(msg)):highlight({
+            ["#%d+"] = "LazyCommitIssue",
+            ["^%S+:"] = "LazyCommitType",
+            ["^%S+(%(.*%))!?:"] = "LazyCommitScope",
+            ["`.-`"] = "@markup.raw.markdown_inline",
+            ["%*.-%*"] = "Italic",
+            ["%*%*.-%*%*"] = "Bold",
+          })
+          self:append(" " .. time, "LazyComment")
+          self:nl()
+        end
         -- else
         --   self:append(line, "LazyTaskOutput", { indent = 6 }):nl()
       end
